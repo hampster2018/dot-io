@@ -181,6 +181,21 @@ const Navbar = (): ReactElement => {
           <NavMenuLink aria-current="page">
             <NavLinksImage open={false} src={Crown_Icon} alt="" />
           </NavMenuLink>
+          <NavBtnLink
+            href="#/concepts-mastered"
+            onClick={() => setTrainingLevel('')}
+          >
+            <div className="text-white">Concepts</div>
+          </NavBtnLink>
+          <button
+            className="hover:bg-[#333] rounded"
+            onClick={() => setIsDisplayingIntroductionModal(true)}
+          ></button>
+        </NavBtn>
+        <NavBtn>
+          <NavMenuLink aria-current="page">
+            <NavLinksImage open={false} src={Crown_Icon} alt="" />
+          </NavMenuLink>
           <NavBtnLink href="#/manager" onClick={() => setTrainingLevel('')}>
             <div className="text-white">Manager</div>
           </NavBtnLink>

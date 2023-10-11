@@ -13,6 +13,7 @@ import Crown_Icon from '../assets/Crown_icon.png';
 import StM_Icon from '../assets/StM.png';
 import tWPM_Icon from '../assets/tWPM.png';
 import LockIconWhite from '../../src/pages/test/components/LockIconWhite';
+import ConstructionIconWhite from '../../src/pages/test/components/ConstructionIconWhite';
 import { ScoresComponent } from './scoresComponent';
 import InfoIcon from '../../src/pages/test/components/InfoIcon';
 import type { TrainingLevels } from '../../src/models/trainingLevels';
@@ -144,17 +145,17 @@ const Navbar = (): ReactElement => {
           </NavMenuLink>
           <NavMenuLink aria-current="page">
             {trainingLevel == 'sWPM' ? <Circle /> : ''}
-            <LockIconStyle>
-              <LockIconWhite />
-            </LockIconStyle>
+            <ConstructionIconStyle>
+              <ConstructionIconWhite />
+            </ConstructionIconStyle>
             <NavLinksImage open={false} src={DumbellImage} alt="" />
           </NavMenuLink>
           <NavMenuLink aria-current="page">
             {trainingLevel == 'StM' ? <Circle /> : ''}
             <div className="text-white font-mono"></div>
-            <LockIconStyle>
-              <LockIconWhite />
-            </LockIconStyle>
+            <ConstructionIconStyle>
+              <ConstructionIconWhite />
+            </ConstructionIconStyle>
             <NavLinksImage
               open={false}
               src={StM_Icon}
@@ -163,15 +164,15 @@ const Navbar = (): ReactElement => {
             />
           </NavMenuLink>
           <NavMenuLink aria-current="page">
-            <LockIconStyle>
-              <LockIconWhite />
-            </LockIconStyle>
+            <ConstructionIconStyle>
+              <ConstructionIconWhite />
+            </ConstructionIconStyle>
             <NavLinksImage open={false} src={tWPM_Icon} alt="" />
           </NavMenuLink>
           <NavMenuLink aria-current="page">
-            <LockIconStyle>
-              <LockIconWhite />
-            </LockIconStyle>
+            <ConstructionIconStyle>
+              <ConstructionIconWhite />
+            </ConstructionIconStyle>
             <NavLinksImage open={false} src={CM_Icon} alt="" />
           </NavMenuLink>
         </NavMenu>
@@ -181,7 +182,7 @@ const Navbar = (): ReactElement => {
             <NavLinksImage open={false} src={Crown_Icon} alt="" />
           </NavMenuLink>
           <NavBtnLink href="#/manager" onClick={() => setTrainingLevel('')}>
-            Connect
+            <div className="text-white">Manager</div>
           </NavBtnLink>
           <button
             className="hover:bg-[#333] rounded"
@@ -199,6 +200,10 @@ export default Navbar;
 
 const LockIconStyle = styled.div.attrs({
   className: `items-center justify-center pl-6`,
+})``;
+
+const ConstructionIconStyle = styled.div.attrs({
+  className: `border-2 border-transparent rounded-full items-center justify-center pl-6`,
 })``;
 
 const LogoLink = styled.a.attrs({
@@ -322,20 +327,19 @@ const NavBtn = styled.button`
 
 const NavBtnLink = styled.a`
   border-radius: 50px;
-  background: rgb(34 197 94);
   white-space: nowrap;
   padding: 10px 22px;
   color: #222424;
   font-size: 16px;
   outline: none;
-  border: none;
+  border: 1px solid white;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
 
   &:hover {
     color: #ffff;
-    background: #32cd32;
+    background: #01a049;
     transition: 0.3s ease out;
   }
 `;

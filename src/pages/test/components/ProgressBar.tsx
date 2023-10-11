@@ -372,7 +372,7 @@ export function ProgressBar(): ReactElement {
               <RightTerms>
                 {timeTakenToTypeEachWordInOrder?.length == 0 ? 0 : Accuracy}%
                 acc
-                <div>
+                <div className="text-[#38bdf8]">
                   {isNaN(averageOfLocalStats.toFixed(0))
                     ? '0'
                     : averageOfLocalStats.toFixed(0)}{' '}
@@ -384,7 +384,7 @@ export function ProgressBar(): ReactElement {
                 {wordsPracticedInOrder.length > 999
                   ? '999+Terms'
                   : wordsPracticedInOrder.length + ' Terms'}
-                <div>
+                <div className="text-[#ef4444]">
                   {timeTakenToTypeEachWordInOrder?.length == 0
                     ? 0
                     : timeTakenToTypeEachWordInOrder?.length < 11
@@ -451,11 +451,11 @@ const ProgressBarOuter = styled.div.attrs({
 })``;
 
 const LeftTerms = styled.div.attrs({
-  className: `rotate-180 float-left text-xs text-neutral-400`,
+  className: `rotate-180 float-left text-xs text-neutral-400 w-20`,
 })``;
 
 const RightTerms = styled.div.attrs({
-  className: `rotate-180  text-xs text-neutral-400`,
+  className: `rotate-180  text-xs text-neutral-400 w-20`,
 })``;
 
 const WPMText = styled.div.attrs({

@@ -213,7 +213,7 @@ export const MultiRangeSlider = (
                 [...Array(10)].map((e, n) => (
                   <div key={n} className="ruler-sub-rule absolute"></div>
                 ))}
-              <div className="text-[6px] absolute font-bold m-auto text-center text-neutral-600 flex-col">
+              <div className="text-[10px] absolute font-bold -ml-2 text-center text-neutral-300 flex-col w-4">
                 {i * step}
               </div>
             </div>
@@ -238,7 +238,8 @@ export const MultiRangeSlider = (
         <div
           className="thumb thumb-left absolute"
           style={{
-            backgroundColor: props.minValue > props.maxValue ? 'red' : 'blue',
+            backgroundColor:
+              props.minValue > props.maxValue ? '#ef4444' : '#38bdf8',
           }}
         ></div>
         <div
@@ -260,7 +261,8 @@ export const MultiRangeSlider = (
         <div
           className="thumb thumb-right absolute"
           style={{
-            backgroundColor: props.minValue > props.maxValue ? 'blue' : 'red',
+            backgroundColor:
+              props.minValue > props.maxValue ? '#38bdf8' : '#ef4444',
           }}
         ></div>
 

@@ -28,10 +28,16 @@ export function ScoresComponent(): ReactElement {
   `;
 
   const CPMTSpeed = parseInt(
+    /*eslint-disable*/
     Math.max.apply(Math, Object.values(maxWPM))?.toFixed(),
+    /*eslint-enable*/
   );
   console.log('CPM Top Speed: ' + CPMTSpeed);
   store.getActions().addCPMTopSpeed(CPMTSpeed);
+
+  const ChMChordMastered = parseInt((sumOfChordsMastered / 100)?.toFixed(2));
+  console.log('ChM Chords Mastered: ' + ChMChordMastered);
+  store.getActions().addChMChordsMastered(ChMChordMastered);
 
   return (
     <React.Fragment>

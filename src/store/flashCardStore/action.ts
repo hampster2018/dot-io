@@ -45,8 +45,7 @@ const flashCardStoreActions: flashCardActionModel = {
     state.flashCards[payload.index] = payload.newFlashCard;
   }),
 
-  addTagFlashCard: action((state, payload) => {
-    console.log(payload);
+  /*addTagFlashCard: action((state, payload) => {
     if (!(payload.key in state.tags)) {
       state.tags[payload.key] = [];
     }
@@ -54,6 +53,24 @@ const flashCardStoreActions: flashCardActionModel = {
       state.flashCards[payload.index].tags.push(payload.key);
       state.tags[payload.key].push(payload.index);
     }
+  }),*/
+
+  addTagFlashCard: action((state, payload) => {
+    const { key, index } = payload;
+    if (!state.flashCards[index].tags.includes(key)) {
+      state.flashCards[index].tags.push(key);
+    }
+    if (!(key in state.tags)) {
+      state.tags[key] = [];
+    }
+    if (index != undefined && !state.tags[key].includes(index)) {
+      state.tags[key].push(index);
+    }
+  }),
+
+  setSelectedTag: action((state, payload) => {
+    console.log('Setting a tag');
+    state.selectedTags = payload;
   }),
 
   removeTagFlashCard: action((state, payload) => {
@@ -68,42 +85,61 @@ const flashCardStoreActions: flashCardActionModel = {
     }
   }),
 
-  setNextDailyTraining: action((state) => {
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    currentDate.setDate(currentDate.getDate() + 1);
-
-    state.nextTrainingDate = currentDate;
-
-    localStorage.setItem('nextDailyTraining', JSON.stringify(currentDate));
-  }),
-
   //Actions to generate training data
-  setSessionTrainingData: action((state) => {
+  setSessionTrainingData: action((state, payload) => {
     const activeFlashCards = state.activeFlashCards;
-    console.log(activeFlashCards);
-
     const sessionTrainingData: sessionTrainingData[] = [];
 
-    while (
-      sessionTrainingData.length < state.numberOfDailyFlashCards &&
-      activeFlashCards.length != 0
-    ) {
+    while (sessionTrainingData.length < payload) {
       const randomIndex = Math.floor(Math.random() * activeFlashCards.length);
-      const randomFlashCard = activeFlashCards[randomIndex];
+      const randomFlashCard = activeFlashCards[randomIndex].flashCard;
 
       sessionTrainingData.push({
         flashCard: randomFlashCard,
+        flashCardIndex: activeFlashCards[randomIndex].flashCardIndex,
         numberOfTimesWritten: 0,
         numberOfTimesWrittenFast: 0,
         numberOfTimesWrittenWrong: 0,
         lastTenTimesSpeed: [],
+        completed: false,
       });
 
       activeFlashCards.splice(randomIndex, 1);
     }
-
     state.sessionTrainingData = sessionTrainingData;
+  }),
+
+  setInfiniteSessionTrainingData: action((state, payload) => {
+    const activeFlashCards = payload;
+    const sessionTrainingData: sessionTrainingData[] = [];
+
+    while (activeFlashCards.length != 0) {
+      const randomIndex = Math.floor(Math.random() * activeFlashCards.length);
+      const randomFlashCard = activeFlashCards[randomIndex].flashCard;
+
+      sessionTrainingData.push({
+        flashCard: randomFlashCard,
+        flashCardIndex: activeFlashCards[randomIndex].flashCardIndex,
+        numberOfTimesWritten: 0,
+        numberOfTimesWrittenFast: 0,
+        numberOfTimesWrittenWrong: 0,
+        lastTenTimesSpeed: [],
+        completed: null,
+      });
+
+      activeFlashCards.splice(randomIndex, 1);
+    }
+    state.sessionTrainingData = sessionTrainingData;
+  }),
+
+  mergeSessionTrainingData: action((state) => {
+    state.sessionTrainingData.forEach((card) => {
+      state.flashCards[card.flashCardIndex].timesTyped +=
+        card.numberOfTimesWritten;
+      state.flashCards[card.flashCardIndex].timesErrored +=
+        card.numberOfTimesWrittenWrong;
+    });
+    state.sessionTrainingData = [];
   }),
 
   addTimeSessionTrainingData: action((state, payload) => {
@@ -127,34 +163,36 @@ const flashCardStoreActions: flashCardActionModel = {
 
     state.sessionTrainingData[index].numberOfTimesWritten++;
     if (
-      state.sessionTrainingData[index].numberOfTimesWritten >= 100 ||
-      state.sessionTrainingData[index].numberOfTimesWrittenFast >= 10
+      state.sessionTrainingData[index].completed != null &&
+      (state.sessionTrainingData[index].numberOfTimesWritten >= 6 ||
+        state.sessionTrainingData[index].numberOfTimesWrittenFast >= 10)
     ) {
-      const flashCard = state.sessionTrainingData.splice(index, 1)[0].flashCard;
-      const poppedFlashCard: string = JSON.stringify(flashCard);
-      for (let i = 0; i < state.flashCards.length; i++) {
-        if (JSON.stringify(state.flashCards[i]) === poppedFlashCard) {
-          const newDate = new Date();
-          newDate.setHours(0, 0, 0, 0);
-          newDate.setDate(
-            newDate.getDate() + state.flashCards[i].ebbinghausValue + 1,
-          );
-          state.flashCards[i].ebbinghausValue++;
-          state.flashCards[i].nextReinforcement = newDate.getTime();
-          break;
-        }
-      }
+      state.sessionTrainingData[index].completed = true;
+      const flashCardIndex = state.sessionTrainingData[index].flashCardIndex;
+      const newDate = new Date();
+      newDate.setHours(0, 0, 0, 0);
+      newDate.setDate(
+        newDate.getDate() +
+          state.flashCards[flashCardIndex].ebbinghausValue +
+          1,
+      );
+      state.flashCards[flashCardIndex].ebbinghausValue++;
+      state.flashCards[flashCardIndex].nextReinforcement = newDate.getTime();
     }
   }),
 
   fetchUserData: thunk(async (actions) => {
-    const flashCards: flashCard[] = await JSON.parse(
-      localStorage.getItem('flashCards'),
-    );
-    if (flashCards != null) {
-      flashCards.forEach((card) => {
-        actions.addFlashCard(card);
-      });
+    const flashCardString = localStorage.getItem('flashCards');
+    if (flashCardString != null) {
+      const flashCards: flashCard[] = await JSON.parse(flashCardString);
+      if (flashCards != null) {
+        flashCards.forEach((card, index) => {
+          actions.addFlashCard(card);
+          card.tags.forEach((tag) => {
+            actions.addTagFlashCard({ key: tag, index: index });
+          });
+        });
+      }
     }
     actions.setLoadedFromStorage();
   }),
